@@ -5,3 +5,6 @@
 *.exe
 *.depend
 *.o
+combiler.depend
+bin/Debug/combiler.exe
+obj/Debug/main.o
