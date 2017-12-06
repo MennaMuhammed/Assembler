@@ -1,14 +1,40 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <sstream>
 using namespace std;
+
+string to_string(int i)
+{
+    stringstream ss;
+    ss << i;
+    return ss.str();
+}
+string toBinary(int n,int bit)
+{
+    string r;
+    do{
+    r=(n%2==0 ?"0":"1")+r; n/=2;
+    }while(n!=0);
+    while(r.length()<bit){
+        r="0"+r;
+    }
+    return r;
+}
 
 
 string get_op(string x){
-
+string op = x.substr(0,x.find_first_of("$"));
+    for(int i=0;i<op.length();i++){
+        if(op[i]==' ')op.erase(i,1);
+    }
+    return op;
 }
-string get_func(string x){
-
+string removeSpace(string x){
+    for(int i=0;i<x.length();i++){
+        if(x[i]==' ')x.erase(i,1);
+    }
+    return x;
 }
 string get_reg(int num,string x){
 string reg = x.substr(x.find_first_of("$"));
@@ -33,10 +59,15 @@ else if(num==3){
 return reg;
 }
 string get_16(string x){
-
+    string immedAdd = x.substr(x.find_last_of(","));
+    return immedAdd;
 }
-string get_26(string x){
-
+/*string get_26(string x){
+    string bit26Add =
+}*/
+string get_shamt(string x){
+    string shamt = x.substr(x.find_last_of(",")+1);
+    return shamt;
 }
 
 
@@ -128,41 +159,73 @@ else if(y.find("$k") != string::npos){
 }
 return r;
 }
-string r_form(string x){
-int op =0;
-int func = 0;
+string r_form(string y){
+string x = get_op(y);
+int op=0;
+int rs=0;
+int rt=0;
+int rd=0;
+int shamt=0;
+int func=0;
 if(x=="add"){
        func = 32;
-}
-else if(x=="and"){
-        func =36;
-}
-else if(x=="or"){
-    func =37;
+       rs = reg(get_reg(2,y));
+       rt = reg(get_reg(3,y));
+       rd = reg(get_reg(1,y));
 }
 else if(x=="sub"){
        func =34;
+       rs = reg(get_reg(2,y));
+       rt = reg(get_reg(3,y));
+       rd = reg(get_reg(1,y));
+}
+else if(x=="and"){
+       func =36;
+       rs = reg(get_reg(2,y));
+       rt = reg(get_reg(3,y));
+       rd = reg(get_reg(1,y));
+}
+else if(x=="or"){
+    func =37;
+       rs = reg(get_reg(2,y));
+       rt = reg(get_reg(3,y));
+       rd = reg(get_reg(1,y));
 }
 else if(x=="nor"){
     func =39;
+       rs = reg(get_reg(2,y));
+       rt = reg(get_reg(3,y));
+       rd = reg(get_reg(1,y));
 }
 else if(x=="slt"){
     func =42;
+       rs = reg(get_reg(2,y));
+       rt = reg(get_reg(3,y));
+       rd = reg(get_reg(1,y));
 }
 else if(x=="sll"){
     func =0;
+       rd = reg(get_reg(1,y));
+       rt = reg(get_reg(2,y));
+       shamt = atoi(get_shamt(y).c_str());
 }
 else if (x== "srl"){
     func =2;
+       rd = reg(get_reg(1,y));
+       rt = reg(get_reg(2,y));
+       shamt = atoi(get_shamt(y).c_str());
 }
 else if(x=="jr"){
     func =8;
+    rs = reg(get_reg(1,y));
 }
-return x;
+string machCode = toBinary(op,6)+toBinary(rs,5)+toBinary(rt,5)+toBinary(rd,5)+toBinary(shamt,5)+toBinary(func,6);
+return machCode;
 }
-string operation(string x){
+string operation(string y){
+    string x = get_op(y);
 if(x=="add" || x=="and" || x=="or" || x=="sub" || x=="nor" || x=="slt" || x=="sll" || x== "srl" || x=="jr"){
- x = r_form(x);
+  r_form(y);
 }
 else if(x=="addi" || x=="andi" || x=="ori" || x=="slti" || x=="lw" || x=="sw"||x=="lui"||x=="beq" || x=="bne"){
 
@@ -175,10 +238,12 @@ else if(x=="j"){
 
 int main()
 {
-    //string input ="";
-    //cin>>input;
-    cout<<get_reg(1,"$s3, $s4, $s2")<<endl;
-    cout<<get_reg(2,"$s3, $s4, $s2")<<endl;
-    cout<<get_reg(3,"$s3, $s4, $s2")<<endl;
+    bool run =true;
+    while(run){
+    string input ="";
+    getline(cin,input);
+    input = removeSpace(input);
+    cout<<r_form(input)<<endl;
+    }
     return 0;
 }
