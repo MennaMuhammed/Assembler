@@ -1,0 +1,4 @@
+c: add $t0, $s1, $s2
+a: lw $t0,28($s0)
+beq $t0, $t1, c
+j a
