@@ -56,10 +56,19 @@ else if(num==3){
         if(reg[i]==' ')reg.erase(i,1);
     }
 }
+else if(num==0){ //sp case for lw and sw
+    reg=reg.substr(reg.find_first_of("(")+1,reg.find_first_of(")")-reg.find_first_of("(")-1);
+}
 return reg;
 }
 string get_16(string x){
-    string immedAdd = x.substr(x.find_last_of(","));
+    string immedAdd ="";
+    if(x.find("(") != string::npos){
+    immedAdd = x.substr(x.find_first_of(",")+1,x.find_first_of(")")-x.find_first_of(",")-1);
+    }
+    else{
+    immedAdd = x.substr(x.find_last_of(",")+1);
+    }
     return immedAdd;
 }
 /*string get_26(string x){
@@ -222,13 +231,85 @@ else if(x=="jr"){
 string machCode = toBinary(op,6)+toBinary(rs,5)+toBinary(rt,5)+toBinary(rd,5)+toBinary(shamt,5)+toBinary(func,6);
 return machCode;
 }
+string i_form(string y){
+    string x = get_op(y);
+    int op=0;
+    int rs =0;
+    int rt=0;
+    int immAdd =0;
+    if(x=="addi"){
+        op=8;
+        rs=reg(get_reg(2,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+    }
+    else if(x=="andi"){
+        op=12;
+        rs=reg(get_reg(2,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="ori"){
+        op=13;
+        rs=reg(get_reg(2,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="slti"){
+        op=10;
+        rs=reg(get_reg(2,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="lw"){
+        op=35;
+        rs=reg(get_reg(0,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="sw"){
+        op=43;
+        rs=reg(get_reg(0,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="lui"){
+        op=15;
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="beq"){
+        op=8;
+        rs=reg(get_reg(2,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+    else if(x=="bne"){
+        op=8;
+        rs=reg(get_reg(2,y));
+        rt=reg(get_reg(1,y));
+        immAdd=atoi(get_16(y).c_str());
+
+    }
+ string machCode = toBinary(op,6)+toBinary(rs,5)+toBinary(rt,5)+toBinary(immAdd,16);
+ return machCode;
+
+}
 string operation(string y){
     string x = get_op(y);
+    string result ="";
 if(x=="add" || x=="and" || x=="or" || x=="sub" || x=="nor" || x=="slt" || x=="sll" || x== "srl" || x=="jr"){
-  r_form(y);
+ result = r_form(y);
 }
 else if(x=="addi" || x=="andi" || x=="ori" || x=="slti" || x=="lw" || x=="sw"||x=="lui"||x=="beq" || x=="bne"){
-
+ result = i_form(y);
 }
 else if(x=="j"){
 
@@ -243,7 +324,7 @@ int main()
     string input ="";
     getline(cin,input);
     input = removeSpace(input);
-    cout<<r_form(input)<<endl;
+    cout<<i_form(input)<<endl;
     }
     return 0;
 }

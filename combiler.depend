@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1512580813 source:c:\users\lenovo\desktop\co\combiler\main.cpp
+1512584098 source:c:\users\lenovo\desktop\co\combiler\main.cpp
 	<iostream>
 	<string>
 	<stdlib.h>
