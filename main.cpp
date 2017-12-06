@@ -2,49 +2,40 @@
 #include <string>
 #include <stdlib.h>
 using namespace std;
-string operation(string x){
-if(x=="add" || x=="and" || x=="or" || x=="sub" || x=="nor" || x=="slt" || x=="sll" || x== "srl" || x=="jr"){
-  r_form(x);
-}
-else if(x=="addi" || x=="andi" || x=="ori" || x=="slti" || x=="lw" || x=="sw"||x=="lui"||x=="beq" || x=="bne"){
-
-}
-else if(x=="j"){
-
-}
-}
-string r_form(string x){
-int op =0;
-int func = 0;
-if(x=="add"){
-       func = 32;
-}
-else if(x=="and"){
-        func =36;
-}
-else if(x=="or"){
-    func =37;
-}
-else if(x=="sub"){
-       func =34;
-}
-else if(x=="nor"){
-    func =39;
-}
-else if(x=="slt"){
-    func =42;
-}
-else if(x=="sll"){
-    func =0;
-}
-else if (x== "srl"){
-    func =2;
-}
-else if(x=="jr"){
-    func =8;
-}
 
 
+string get_op(string x){
+
+}
+string get_func(string x){
+
+}
+string get_reg(int num,string x){
+string reg = x.substr(x.find_first_of("$"));
+if(num==1){
+    reg=reg.substr(0,reg.find_first_of(","));
+    for(int i=0;i<reg.length();i++){
+        if(reg[i]==' ')reg.erase(i,1);
+    }
+}
+else if(num==2){
+    reg=reg.substr(reg.find_first_of(",")+1,reg.find_last_of(",")-reg.find_first_of(",")-1);
+    for(int i=0;i<reg.length();i++){
+        if(reg[i]==' ')reg.erase(i,1);
+    }
+}
+else if(num==3){
+    reg=reg.substr(reg.find_last_of(",")+1);
+    for(int i=0;i<reg.length();i++){
+        if(reg[i]==' ')reg.erase(i,1);
+    }
+}
+return reg;
+}
+string get_16(string x){
+
+}
+string get_26(string x){
 
 }
 
@@ -137,14 +128,57 @@ else if(y.find("$k") != string::npos){
 }
 return r;
 }
+string r_form(string x){
+int op =0;
+int func = 0;
+if(x=="add"){
+       func = 32;
+}
+else if(x=="and"){
+        func =36;
+}
+else if(x=="or"){
+    func =37;
+}
+else if(x=="sub"){
+       func =34;
+}
+else if(x=="nor"){
+    func =39;
+}
+else if(x=="slt"){
+    func =42;
+}
+else if(x=="sll"){
+    func =0;
+}
+else if (x== "srl"){
+    func =2;
+}
+else if(x=="jr"){
+    func =8;
+}
+return x;
+}
+string operation(string x){
+if(x=="add" || x=="and" || x=="or" || x=="sub" || x=="nor" || x=="slt" || x=="sll" || x== "srl" || x=="jr"){
+ x = r_form(x);
+}
+else if(x=="addi" || x=="andi" || x=="ori" || x=="slti" || x=="lw" || x=="sw"||x=="lui"||x=="beq" || x=="bne"){
 
+}
+else if(x=="j"){
+
+}
+}
 
 
 int main()
 {
-    string input ="";
-    cin>>input;
-    cout<<reg(input);
-
+    //string input ="";
+    //cin>>input;
+    cout<<get_reg(1,"$s3, $s4, $s2")<<endl;
+    cout<<get_reg(2,"$s3, $s4, $s2")<<endl;
+    cout<<get_reg(3,"$s3, $s4, $s2")<<endl;
     return 0;
 }
